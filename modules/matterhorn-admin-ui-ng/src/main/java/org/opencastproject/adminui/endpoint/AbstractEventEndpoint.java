@@ -450,7 +450,8 @@ public abstract class AbstractEventEndpoint {
   @Path("{eventId}/scheduling")
   @RestQuery(name = "updateEventScheduling", description = "Updates the scheduling information of an event", returnDescription = "The method doesn't return any content", pathParameters = {
           @RestParameter(name = "eventId", isRequired = true, description = "The event identifier", type = RestParameter.Type.STRING) }, restParameters = {
-                  @RestParameter(name = "scheduling", isRequired = true, description = "The updated scheduling (JSON object)", type = RestParameter.Type.TEXT) }, reponses = {
+                  @RestParameter(name = "scheduling", isRequired = true, description = "The updated scheduling (JSON object)", type = RestParameter.Type.TEXT),
+                  @RestParameter(name = "skipConflictCheck", description = "Whether to skip conflict check during scheduling update.", defaultValue = "false", isRequired = false, type = RestParameter.Type.BOOLEAN) }, reponses = {
                           @RestResponse(responseCode = SC_BAD_REQUEST, description = "The required params were missing in the request."),
                           @RestResponse(responseCode = SC_NOT_FOUND, description = "If the event has not been found."),
                           @RestResponse(responseCode = SC_NO_CONTENT, description = "The method doesn't return any content") })
@@ -511,7 +512,7 @@ public abstract class AbstractEventEndpoint {
 
       getSchedulerService().updateEvent(eventId, start, end, agentId, Opt.<Set<String>> none(),
               Opt.<MediaPackage> none(), Opt.<Map<String, String>> none(), agentConfiguration, optOut,
-              SchedulerService.ORIGIN);
+              SchedulerService.ORIGIN, skipConflictCheck);
       return Response.noContent().build();
     } catch (JSONException e) {
       return RestUtil.R.badRequest("The scheduling object is not valid");
